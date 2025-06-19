@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConverterAll - Alat Konversi Teks Gratis</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: 20px auto; padding: 20px; background: #f9f9f9; }
+        textarea { width: 100%; height: 150px; padding: 10px; margin: 10px 0; font-size: 16px; }
+        button { margin: 5px 5px 5px 0; padding: 10px 15px; font-size: 16px; cursor: pointer; }
+        h1 { text-align: center; }
+        footer { text-align: center; margin-top: 30px; font-size: 14px; color: gray; }
+    </style>
+</head>
+<body>
+    <h1>ConverterAll</h1>
+    <p>Masukkan teks di bawah ini, lalu pilih fungsi konversi:</p>
+    <textarea id="inputText" placeholder="Tulis teks di sini..."></textarea><br>
+    <button onclick="toUpperCase()">Konversi ke HURUF BESAR</button>
+    <button onclick="toLowerCase()">Konversi ke huruf kecil</button>
+    <button onclick="removeWhitespace()">Hapus Spasi Ekstra</button>
+    <button onclick="slugify()">Jadikan Slug (URL SEO)</button>
+    <button onclick="toBase64()">Encode ke Base64</button>
+    <button onclick="fromBase64()">Decode dari Base64</button>
+
+    <h2>Hasil:</h2>
+    <textarea id="outputText" readonly placeholder="Hasil akan muncul di sini..."></textarea>
+
+    <footer>&copy; 2025 ConverterAll. Alat konversi teks online gratis.</footer>
+
+    <script>
+        function toUpperCase() {
+            const text = document.getElementById("inputText").value;
+            document.getElementById("outputText").value = text.toUpperCase();
+        }
+        function toLowerCase() {
+            const text = document.getElementById("inputText").value;
+            document.getElementById("outputText").value = text.toLowerCase();
+        }
+        function removeWhitespace() {
+            const text = document.getElementById("inputText").value;
+            document.getElementById("outputText").value = text.replace(/\s+/g, ' ').trim();
+        }
+        function slugify() {
+            const text = document.getElementById("inputText").value;
+            document.getElementById("outputText").value = text.toLowerCase().trim().replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-');
+        }
+        function toBase64() {
+            const text = document.getElementById("inputText").value;
+            document.getElementById("outputText").value = btoa(text);
+        }
+        function fromBase64() {
+            const text = document.getElementById("inputText").value;
+            try {
+                document.getElementById("outputText").value = atob(text);
+            } catch (e) {
+                document.getElementById("outputText").value = "Teks bukan Base64 yang valid!";
+            }
+        }
+    </script>
+<script type='text/javascript' src='//pl26956345.profitableratecpm.com/f2/53/db/f253db0ebfcba3ad0dac2327c983d3ca.js'></script>
+</body>
+</html>
