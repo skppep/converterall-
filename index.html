@@ -1,130 +1,246 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ConverterAll - Alat Konversi Teks Gratis</title>
+    <title>ConverterAll - Konversi Gambar ke PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        max-width: 700px;
-        margin: 40px auto;
-        padding: 30px;
-        background: #f4f6f8;
-        color: #333;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #f4f6f8;
+            color: #333;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    h1 {
-        text-align: center;
-        color: #007bff;
-        margin-bottom: 20px;
-    }
+        h1 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
 
-    p {
-        color: #555;
-        margin-bottom: 20px;
-        line-height: 1.6;
-    }
+        p {
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
 
-    textarea {
-        width: calc(100% - 22px); /* Menyesuaikan dengan padding */
-        height: 150px;
-        padding: 10px;
-        margin-bottom: 15px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box; /* Penting agar padding tidak menambah lebar */
-        transition: border-color 0.3s ease-in-out;
-    }
+        .drop-zone {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #007bff;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 1.1em;
+            color: #666;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            margin-bottom: 20px;
+        }
 
-    textarea:focus {
-        border-color: #007bff;
-        outline: none;
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-    }
+        .drop-zone.hover {
+            background-color: #e6f7ff;
+            border-color: #0056b3;
+        }
 
-    button {
-        margin: 5px 8px 10px 0;
-        padding: 12px 20px;
-        font-size: 16px;
-        color: #fff;
-        background-color: #007bff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s ease-in-out;
-    }
+        .drop-zone p {
+            margin: 5px 0;
+            padding: 0 10px;
+            color: #666;
+        }
 
-    button:hover {
-        background-color: #0056b3;
-    }
+        .drop-zone input[type="file"] {
+            display: none;
+        }
 
-    h2 {
-        color: #007bff;
-        margin-top: 30px;
-        margin-bottom: 10px;
-    }
+        button {
+            margin: 5px 8px 10px 0;
+            padding: 12px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #28a745; /* Warna hijau untuk tombol konversi */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+            width: fit-content;
+            display: block;
+            margin: 0 auto 15px auto;
+        }
 
-    footer {
-        text-align: center;
-        margin-top: 40px;
-        padding-top: 20px;
-        font-size: 14px;
-        color: #777;
-        border-top: 1px solid #eee;
-    }
+        button:hover {
+            background-color: #218838;
+        }
+
+        #statusMessage {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            font-size: 14px;
+            color: #777;
+            border-top: 1px solid #eee;
+        }
     </style>
 </head>
 <body>
     <h1>ConverterAll</h1>
-    <p>Masukkan teks di bawah ini, lalu pilih fungsi konversi:</p>
-    <textarea id="inputText" placeholder="Tulis teks di sini..."></textarea><br>
-    <button onclick="toUpperCase()">Konversi ke HURUF BESAR</button>
-    <button onclick="toLowerCase()">Konversi ke huruf kecil</button>
-    <button onclick="removeWhitespace()">Hapus Spasi Ekstra</button>
-    <button onclick="slugify()">Jadikan Slug (URL SEO)</button>
-    <button onclick="toBase64()">Encode ke Base64</button>
-    <button onclick="fromBase64()">Decode dari Base64</button>
+    <p>Seret & lepas file **JPG** atau **PNG** Anda di sini, atau klik untuk memilih file.</p>
 
-    <h2>Hasil:</h2>
-    <textarea id="outputText" readonly placeholder="Hasil akan muncul di sini..."></textarea>
+    <div id="dropZone" class="drop-zone">
+        <p>Seret & Lepas File di Sini</p>
+        <p>atau</p>
+        <p>Klik untuk Pilih File</p>
+        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png">
+    </div>
 
-    <footer>&copy; 2025 ConverterAll. Alat konversi teks online gratis.</footer>
+    <button id="convertButton" style="display:none;">Konversi JPG/PNG ke PDF</button>
+
+    <div id="statusMessage"></div>
+
+    <footer>&copy; 2025 ConverterAll. Alat konversi gambar ke PDF online gratis.</footer>
 
     <script>
-        function toUpperCase() {
-            const text = document.getElementById("inputText").value;
-            document.getElementById("outputText").value = text.toUpperCase();
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const convertButton = document.getElementById('convertButton');
+        const statusMessage = document.getElementById('statusMessage');
+        let selectedFile = null;
+
+        // Mencegah perilaku default browser untuk drag & drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
-        function toLowerCase() {
-            const text = document.getElementById("inputText").value;
-            document.getElementById("outputText").value = text.toLowerCase();
+
+        // Menambahkan kelas 'hover' saat file diseret di atas drop zone
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('hover'), false);
+        });
+
+        // Menghapus kelas 'hover' saat file meninggalkan drop zone
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('hover'), false);
+        });
+
+        // Menangani file yang dijatuhkan
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
         }
-        function removeWhitespace() {
-            const text = document.getElementById("inputText").value;
-            document.getElementById("outputText").value = text.replace(/\s+/g, ' ').trim();
-        }
-        function slugify() {
-            const text = document.getElementById("inputText").value;
-            document.getElementById("outputText").value = text.toLowerCase().trim().replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-');
-        }
-        function toBase64() {
-            const text = document.getElementById("inputText").value;
-            document.getElementById("outputText").value = btoa(text);
-        }
-        function fromBase64() {
-            const text = document.getElementById("inputText").value;
-            try {
-                document.getElementById("outputText").value = atob(text);
-            } catch (e) {
-                document.getElementById("outputText").value = "Teks bukan Base64 yang valid!";
+
+        // Menangani klik pada drop zone (mengaktifkan input file)
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Menangani pemilihan file melalui input
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length === 0) {
+                selectedFile = null;
+                convertButton.style.display = 'none';
+                statusMessage.textContent = 'Tidak ada file yang dipilih.';
+                return;
+            }
+
+            const file = files[0];
+            const fileType = file.type;
+            selectedFile = file;
+
+            if (fileType.startsWith('image/jpeg') || fileType.startsWith('image/png')) {
+                statusMessage.textContent = `File dipilih: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                convertButton.textContent = 'Konversi JPG/PNG ke PDF';
+                convertButton.style.display = 'block';
+                convertButton.disabled = false; // Pastikan tombol aktif
+            } else {
+                statusMessage.textContent = 'Format file tidak didukung. Mohon masukkan file JPG atau PNG.';
+                selectedFile = null;
+                convertButton.style.display = 'none';
             }
         }
+
+        // Logika untuk tombol konversi
+        convertButton.addEventListener('click', () => {
+            if (!selectedFile) {
+                statusMessage.textContent = 'Tidak ada file untuk dikonversi.';
+                return;
+            }
+            convertJpgToPdf(selectedFile);
+        });
+
+        // --- Fungsi Konversi JPG/PNG ke PDF (Menggunakan jsPDF) ---
+        async function convertJpgToPdf(imageFile) {
+            statusMessage.textContent = 'Mengonversi gambar ke PDF...';
+            convertButton.disabled = true;
+
+            const { jsPDF } = window.jspdf;
+
+            const reader = new FileReader();
+            reader.onload = async function(event) {
+                try {
+                    const imgData = event.target.result;
+                    const img = new Image();
+                    img.src = imgData;
+
+                    img.onload = function() {
+                        // Create a new jsPDF instance
+                        const doc = new jsPDF({
+                            orientation: img.width > img.height ? 'landscape' : 'portrait',
+                            unit: 'px',
+                            format: [img.width, img.height] // Set PDF size to image size
+                        });
+
+                        doc.addImage(imgData, 'JPEG', 0, 0, img.width, img.height); // Add image to PDF
+                        doc.save(`${imageFile.name.split('.')[0]}.pdf`); // Save the PDF
+
+                        statusMessage.textContent = 'Konversi berhasil! File PDF telah diunduh.';
+                        convertButton.disabled = false;
+                    };
+                    img.onerror = function() {
+                        statusMessage.textContent = 'Gagal memuat gambar. Pastikan format gambar valid.';
+                        convertButton.disabled = false;
+                    };
+
+                } catch (error) {
+                    console.error("Error during JPG to PDF conversion:", error);
+                    statusMessage.textContent = 'Terjadi kesalahan saat konversi gambar.';
+                    convertButton.disabled = false;
+                }
+            };
+            reader.onerror = function(error) {
+                console.error("FileReader error:", error);
+                statusMessage.textContent = 'Terjadi kesalahan saat membaca file gambar.';
+                convertButton.disabled = false;
+            };
+            reader.readAsDataURL(imageFile);
+        }
     </script>
-<script type='text/javascript' src='//pl26956345.profitableratecpm.com/f2/53/db/f253db0ebfcba3ad0dac2327c983d3ca.js'></script>
+    <script type='text/javascript' src='//pl26956345.profitableratecpm.com/f2/53/db/f253db0ebfcba3ad0dac2327c983d3ca.js'></script>
 </body>
 </html>
